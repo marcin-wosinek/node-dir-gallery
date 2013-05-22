@@ -16,6 +16,7 @@ http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/html'});
 
     for (var i in images) {
+      output += '<h1>' + images[i] + '</h1>';
       output += '<img src="/images/' + images[i] + '" /><br />';
     }
 
