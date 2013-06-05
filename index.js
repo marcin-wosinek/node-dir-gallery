@@ -10,6 +10,12 @@ http.createServer(function(request, response) {
     , filename = path.join(process.cwd(), uri);
 
   if (uri.indexOf('.png') < 0) {
+
+    // to solve issue with slashes
+    if (uri.length == 1) {
+      uri = '';
+    }
+
     var output = '';
     var images = fs.readdirSync('images' + uri);
 
@@ -24,7 +30,7 @@ http.createServer(function(request, response) {
         output += '<img src="/images' + uri + "/" + name + '" /><br />';
       }
       else {
-        output += '<h1><a href="' + uri + "/" + name + '">' + name + '</a></h1>';
+        output += '<h1><a href="' + uri + '/' + name + '">' + name + '</a></h1>';
       }
     }
 
