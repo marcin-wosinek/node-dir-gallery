@@ -9,9 +9,9 @@ http.createServer(function(request, response) {
   var uri = url.parse(request.url).pathname
     , filename = path.join(process.cwd(), uri);
 
-  if (uri == '/') {
+  if (uri.indexOf('.png') < 0) {
     var output = '';
-    var images = fs.readdirSync('images');
+    var images = fs.readdirSync('images' + uri);
 
     response.writeHead(200, {'Content-Type': 'text/html'});
 
@@ -21,10 +21,10 @@ http.createServer(function(request, response) {
       if (name.indexOf('.png') > 0) {
         // Is image
         output += '<h1>' + name + '</h1>';
-        output += '<img src="/images/' + name + '" /><br />';
+        output += '<img src="/images' + uri + "/" + name + '" /><br />';
       }
       else {
-        output += '<h1><a href="' + name + '">' + name + '</a></h1>';
+        output += '<h1><a href="' + uri + "/" + name + '">' + name + '</a></h1>';
       }
     }
 
