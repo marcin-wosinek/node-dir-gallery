@@ -16,8 +16,16 @@ http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/html'});
 
     for (var i in images) {
-      output += '<h1>' + images[i] + '</h1>';
-      output += '<img src="/images/' + images[i] + '" /><br />';
+      var name = images[i];
+
+      if (name.indexOf('.png') > 0) {
+        // Is image
+        output += '<h1>' + name + '</h1>';
+        output += '<img src="/images/' + name + '" /><br />';
+      }
+      else {
+        output += '<h1><a href="' + name + '">' + name + '</a></h1>';
+      }
     }
 
     response.end(output);
