@@ -17,7 +17,16 @@ http.createServer(function(request, response) {
     }
 
     var output = '';
-    var images = fs.readdirSync('images' + uri);
+    var images;
+    try {
+      images = fs.readdirSync('images' + uri);
+    }
+    catch (e) {
+      response.writeHead(404, {"Content-Type": "text/plain"});
+      response.write("404 Dir doen't exists\n");
+      response.end();
+      return;
+    }
 
     response.writeHead(200, {'Content-Type': 'text/html'});
 
@@ -39,7 +48,7 @@ http.createServer(function(request, response) {
     return;
   }
 
-  path.exists(filename, function(exists) {
+  fs.exists(filename, function(exists) {
     if(!exists) {
       response.writeHead(404, {"Content-Type": "text/plain"});
       response.write("404 Not Found\n");
