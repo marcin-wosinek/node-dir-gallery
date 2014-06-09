@@ -5,19 +5,17 @@ var http = require("http"),
     port = process.argv[2] || 1337;
 
 http.createServer(function(request, response) {
-
-  var uri = url.parse(request.url).pathname
-    , filename = path.join(process.cwd(), uri);
+  var uri = url.parse(request.url).pathname,
+    output = '', images, name,
+    href,
+    filename = path.join(process.cwd(), uri);
 
   if (uri.indexOf('.png') < 0) {
-
     // to solve issue with slashes
-    if (uri.length == 1) {
+    if (uri.length === 1) {
       uri = '';
     }
 
-    var output = '';
-    var images;
     try {
       images = fs.readdirSync('images' + uri);
     }
@@ -31,11 +29,12 @@ http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/html'});
 
     for (var i in images) {
-      var name = images[i];
+      name = images[i];
+      href = name.replace(/_/g, '/').replace(/\$\{1\}/g, '?').replace(/_\d*\.png/g, '');
 
+      // render image
       if (name.indexOf('.png') > 0) {
-        // Is image
-        output += '<h1>' + name + '</h1>';
+        output += '<h1><a href="' + href + '" target="blank">' + name + '</a></h1>';
         output += '<img src="/images' + uri + "/" + name + '" /><br />';
       }
       else {
