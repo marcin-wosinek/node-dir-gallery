@@ -43,7 +43,7 @@ http.createServer(function(request, response) {
           '<div class="pure-g">',
           '<h3 class="pure-u-1-5"><a href="' + href + '">' + name + '</a></h3>',
           '<div class="pure-u-4-5"><strong class="badge">' + errors + ' warnings, errors</strong>',
-          ' <a href="' + href + '/remove/ask" class="remove pure-button button-small pure-button-primary">remove folder</a>',
+          //' <a href="' + href + '/remove/ask" class="remove pure-button button-small pure-button-primary">remove folder</a>',
           '</div></div><hr/>'
         ].join(''));
       }
