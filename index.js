@@ -91,8 +91,9 @@ http.createServer(function(request, response) {
       response.writeHead(200, {'Content-Type': 'text/html'});
       output.push('<head>' + resources.join('') + '</head>');
       output.push([
-        '<h2>Remove folder "' + href + '"?',
-        ' <a href="' + href + '/remove" class="remove">yes remove</a></h2>'
+        '<h2>Remove folder "' + href + '"?</h2>',
+        ' <a href="' + href + '/remove" class="remove pure-button pure-button-primary">yes remove</a>',
+        ' <a href="' + href + '" class="remove pure-button">no</a>'
       ].join(''));
       response.end(output.join(''));
     }
