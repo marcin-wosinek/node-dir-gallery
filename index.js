@@ -14,8 +14,8 @@ app.use('/images', express.static(__dirname + '/images'));
 
 var resources = [
   '<meta name="viewport" content="width=device-width, initial-scale=1">',
-  '<script src="/public/script.js"></script>',
   '<script src="http://minifiedjs.com/download/minified-web.js"></script>',
+  '<script src="/public/script.js"></script>',
   '<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">',
   '<link rel="stylesheet" href="/public/site.css">'
 ];
@@ -112,8 +112,8 @@ var uri = url.parse(request.url).pathname,
       }
       output.push([
         '<div class="pure-g ' + (errors ? 'warning' : 'success')+'">',
-          '<h3 class="pure-u-1-5"><a href="' + href + '">' + name + '</a></h3>',
-          '<div class="pure-u-4-5"><strong class="badge">' + errors + ' warnings, errors</strong> ',
+          '<h3 class="pure-u-4-5"><a href="' + href + '">' + name + '</a></h3>',
+          '<div class="pure-u-1-5"><strong class="badge">' + errors + ' warnings, errors</strong> ',
           '<a href="/remove/ask' + href + '" class="remove pure-button button-small pure-button-primary">remove folder</a>',
           '</div></div><hr/>'
         ].join(''));
