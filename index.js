@@ -36,7 +36,8 @@ app.use(function(request, response) {
         output = [
           '<li><h3 id="image-' + linkId + '">',
           '<strong title="index in *urls.txt">' + linkId + '</strong> : ',
-          ' <a href="' + domain + href + '" class="title pure-button pure-button-primary" target="blank">' + domain + href + (prefix ? '#' + prefix : '') + '</a>',
+          ' <a href="' + domain + href + '" class="title pure-button pure-button-primary" target="blank">',
+          domain + href + (prefix ? '#' + prefix : '') + '</a>',
           ' <a href="#image-' + linkId + '"><em class="pure-button button-small">#permlink</em></a></h3>',
           '<img src="/images' + uri + "/" + name + '" class="pure-img" /></li>'
         ];
@@ -48,7 +49,7 @@ app.use(function(request, response) {
           errors = fs.readFileSync(errorFile);
         }
         output.push([
-          '<div class="pure-g">',
+          '<div class="pure-g ' + (errors ? 'warning' : 'success')+'">',
           '<h3 class="pure-u-1-5"><a href="' + href + '">' + name + '</a></h3>',
           '<div class="pure-u-4-5"><strong class="badge">' + errors + ' warnings, errors</strong>',
           //' <a href="' + href + '/remove/ask" class="remove pure-button button-small pure-button-primary">remove folder</a>',
@@ -63,7 +64,12 @@ app.use(function(request, response) {
       '<script src="/public/script.js"></script>',
       '<script src="http://minifiedjs.com/download/minified-web.js"></script>',
       '<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">',
-      '<link rel="stylesheet" href="/public/site.css">',
+      '<link rel="stylesheet" href="/public/site.css">'
+    ],
+    folders = [
+      '<div class="filter-container">',
+      '<strong>ENVIRONMENTS:</strong></div>'
+>>>>>>> gallery css microframework
     ];
 
   // confirm remove folder
@@ -166,9 +172,6 @@ app.use(function(request, response) {
         }
         output.push('</ul>');
       }
-      else {
-        output.push('<h2>NO ERRORS:</h2>');
-      }
 
       // without errors
       output.push('<ul>');
@@ -180,7 +183,7 @@ app.use(function(request, response) {
     }
     // render folders
     else {
-      output.push('<div class="filter-container"><strong>ENVIRONMENTS:</strong></div>');
+      output.push(folders.join(''));
       for (var i in files) {
         output.push(render(files[i], domain, uri));
       }
