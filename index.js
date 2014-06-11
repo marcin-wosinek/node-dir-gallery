@@ -126,17 +126,17 @@ http.createServer(function(request, response) {
       uri = '';
     }
 
-    if (uri.match('INT')) {
-      domain = 'http://synergy-int.roche.com';
-    }
-    else if (uri.match('INT5')) {
+    if (uri.match('INT5')) {
       domain = 'http://synergy5-int.roche.com';
     }
-    else if (uri.match('UAT')) {
-      domain = 'http://synergy-uat.roche.com';
+    else if (uri.match('INT')) {
+      domain = 'http://synergy-int.roche.com';
     }
     else if (uri.match('UAT5')) {
       domain = 'http://synergy5-uat.roche.com';
+    }
+    else if (uri.match('UAT')) {
+      domain = 'http://synergy-uat.roche.com';
     }
     else if (uri.match('UAT5-EMAP')) {
       domain = 'http://synergy5-emap.roche.com';
@@ -144,11 +144,11 @@ http.createServer(function(request, response) {
     else if (uri.match('DEMO5')) {
       domain = 'http://synergy5-demo.roche.com';
     }
-    else if (uri.match('PROD')) {
-      domain = 'http://synergy.roche.com';
-    }
     else if (uri.match('PROD5')) {
       domain = 'http://synergy.intranet.roche.com';
+    }
+    else if (uri.match('PROD')) {
+      domain = 'http://synergy.roche.com';
     }
 
     try {
