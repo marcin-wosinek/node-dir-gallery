@@ -1,10 +1,18 @@
-var http = require("http"),
-    url = require("url"),
-    path = require("path"),
-    fs = require("fs"),
-    port = process.argv[2] || 1337;
+var http = require("http")
+  , url = require("url")
+  , path = require("path")
+  , fs = require("fs")
+  , port = process.argv[2] || 1337
+  , express = require('express')
+  , serveIndex = require('serve-index')
+  , app = express();
 
-http.createServer(function(request, response) {
+app.use('/public', express.static(__dirname + '/public'));
+
+app.use('/images', serveIndex(__dirname + '/images'));
+app.use('/images', express.static(__dirname + '/images'));
+
+app.use(function(request, response) {
   var uri = url.parse(request.url).pathname,
     output = ['<html>'], name,
     files, errorFiles,
@@ -52,35 +60,10 @@ http.createServer(function(request, response) {
     filter = '<div class="filter-container"><label>Filter <input id="filter"/><em></em></label></div>',
     resources = [
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
+      '<script src="/public/script.js"></script>',
       '<script src="http://minifiedjs.com/download/minified-web.js"></script>',
-      '<script>var _ = require("minified");',
-      'function ready() {',
-      '  _.$("#filter").on("keyup",function() {',
-      '    var value = this[0].value, counter = 0;',
-      '    _.$("ul li .title").each(function(node) {',
-      '      if (node.innerHTML.indexOf(value) != -1) {',
-      '       node.parentNode.parentNode.style.display = "block"; counter++;',
-      '      } else {',
-      '       node.parentNode.parentNode.style.display = "none"; }',
-      '    });',
-      '    _.$(".filter-container em").fill("(" + counter + ")");',
-      '  });',
-      '}',
-      '_.$.ready(ready);',
-      '</script>',
       '<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">',
-      '<style>',
-      'body {padding: 50px 10px 10px;}',
-      'h2 {background: #eee; padding: 10px;}',
-      'h3 {margin: .5em 0;}',
-      'ul{padding:0}',
-      'hr {border: 0; height: 1px; background-color: #eee;}',
-      'ul li {border-bottom: solid 1px #f8f8f8;}',
-      '.errors * {color: rgb(202, 60, 60);}',
-      '.errors .pure-button-primary {background-color: rgb(202, 60, 60);}',
-      '.badge {background: #ddd; border-radius: 6px; padding: 3px; margin-left: 15px;font-size: .7em}',
-      '.filter-container {color: #fff; font-size: 2em; position: fixed; top: 0; left: 0; width: 100%; background: #000; padding: 5px;}',
-      '</style>'
+      '<link rel="stylesheet" href="/public/site.css">',
     ];
 
   // confirm remove folder
@@ -207,32 +190,7 @@ http.createServer(function(request, response) {
 
     return;
   }
+});
 
-  fs.exists(fileName, function(exists) {
-    if(!exists) {
-      response.writeHead(404, {'Content-Type': 'text/html'});
-      response.write('404 Not Found\n');
-      response.end();
-      return;
-    }
-
-    if (fs.statSync(fileName).isDirectory()) {
-      fileName += '/index.html';
-    }
-
-    fs.readFile(fileName, "binary", function(err, file) {
-      if(err) {
-        response.writeHead(500, {'Content-Type': 'text/plain'});
-        response.write(err + '\n');
-        response.end();
-        return;
-      }
-
-      response.writeHead(200);
-      response.write(file, 'binary');
-      response.end();
-    });
-  });
-}).listen(port);
-
-console.log('Servert started at ' + port);
+app.listen(port);
+console.log('Server started at ' + port);
