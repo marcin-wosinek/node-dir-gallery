@@ -69,7 +69,6 @@ app.use(function(request, response) {
     folders = [
       '<div class="filter-container">',
       '<strong>ENVIRONMENTS:</strong></div>'
->>>>>>> gallery css microframework
     ];
 
   // confirm remove folder
