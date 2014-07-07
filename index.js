@@ -94,13 +94,13 @@ var uri = url.parse(request.url).pathname,
       linkId = name.match(/_(\d{1,5})\w*?\.png/)[1];
       prefix = name.match(/_\d{1,5}(\w*?)\.png/)[1];
       href = name.replace(/_\d{1,5}\w*?\.png/g, '').replace(/_/g, '/')
-        .replace(/\$1/g, '?').replace(/\$2/g, '&');
+        .replace(/\$1/g, '?').replace(/\$2/g, '&').replace(/\$3/g, '#');
       output = [
         '<li><h3 id="image-' + linkId + '">',
         '<strong title="index in *urls.txt">' + linkId + '</strong> : ',
         ' <a href="' + domain + href + '" class="title pure-button pure-button-primary" target="blank">',
         domain + href + (prefix ? '#' + prefix : '') + '</a>',
-        ' <a href="#image-' + linkId + '"><em class="pure-button button-small">#permlink</em></a></h3>',
+        ' <a href="#image-' + linkId + '"><em class="pure-button button-small">¶</em></a></h3>',
         '<img src="/images' + uri + "/" + name + '" class="pure-img" /></li>'
       ];
     }
