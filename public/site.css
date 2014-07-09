@@ -29,6 +29,10 @@ ul li {
   border-bottom: solid 1px #f8f8f8;
 }
 
+input {
+  border-radius: 6px;
+}
+
 .success {
   color: rgb(28, 184, 65);
 }
@@ -63,4 +67,15 @@ ul li {
 
 .pure-g:hover {
   background-color: #f8f8f8;
+}
+
+.action-smallimg,
+.filter-item {
+  font-size: .6em;
+  padding: 5px;
+  vertical-align: middle;
+}
+
+body.smaller img {
+  max-width: 600px;
 }

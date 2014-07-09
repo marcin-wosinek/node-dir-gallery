@@ -1,30 +1,41 @@
-var http = require("http")
-  , url = require("url")
-  , path = require("path")
-  , fs = require("fs")
-  , port = process.argv[2] || 1337
-  , express = require('express')
-  , serveIndex = require('serve-index')
-  , app = express();
+var http = require("http"),
+  url = require("url"),
+  path = require("path"),
+  fs = require("fs"),
+  port = process.argv[2] || 1337,
+  express = require('express'),
+  serveIndex = require('serve-index'),
+  app = express();
 
 app.use('/public', express.static(__dirname + '/public'));
-
 app.use('/images', serveIndex(__dirname + '/images'));
 app.use('/images', express.static(__dirname + '/images'));
 
 var resources = [
   '<meta name="viewport" content="width=device-width, initial-scale=1">',
+  '<meta http-equiv="content-type" content="text/html; charset=utf-8"/>',
   '<script src="http://minifiedjs.com/download/minified-web.js"></script>',
   '<script src="/public/script.js"></script>',
   '<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">',
   '<link rel="stylesheet" href="/public/site.css">'
 ];
 
+var domains = {
+'INT5': 'http://synergy5-int.roche.com',
+'INT': 'http://synergy-int.roche.com',
+'UAT5': 'http://synergy5-uat.roche.com',
+'UAT': 'http://synergy-uat.roche.com',
+'UAT5-EMAP': 'http://synergy5-emap.roche.com',
+'DEMO5': 'http://synergy5-demo.roche.com',
+'PROD5': 'http://synergy.intranet.roche.com',
+'PROD': 'http://synergy.roche.com'
+};
+
 // confirm remove folder
 app.use('/remove/ask', function(request, response) {
-  var uri = url.parse(request.url).pathname
-    , output = []
-    , href = uri.replace('/remove/ask', '');
+  var uri = url.parse(request.url).pathname,
+    output = [],
+    href = uri.replace('/remove/ask', '');
 
   if (fs.existsSync('images' + href)) {
     response.writeHead(200, {'Content-Type': 'text/html'});
@@ -40,10 +51,9 @@ app.use('/remove/ask', function(request, response) {
 
 // remove folder
 app.use('/remove', function(request, response) {
-  var uri = url.parse(request.url).pathname
-    , output = [];
-
-  var path = './images' + uri;
+  var uri = url.parse(request.url).pathname,
+    output = [],
+    path = './images' + uri;
 
   response.writeHead(200, {'Content-Type': 'text/html'});
   output.push('<head>' + resources.join('') + '</head>');
@@ -100,7 +110,7 @@ var uri = url.parse(request.url).pathname,
         '<strong title="index in *urls.txt">' + linkId + '</strong> : ',
         ' <a href="' + domain + href + '" class="title pure-button pure-button-primary" target="blank">',
         domain + href + (prefix ? '#' + prefix : '') + '</a>',
-        ' <a href="#image-' + linkId + '"><em class="pure-button button-small">¶</em></a></h3>',
+        ' <a href="#image-' + linkId + '"><em class="pure-button button-small">&para;</em></a></h3>',
         '<img src="/images' + uri + "/" + name + '" class="pure-img" /></li>'
       ];
     }
@@ -120,7 +130,13 @@ var uri = url.parse(request.url).pathname,
       }
       return output.join('');
     },
-    filter = '<div class="filter-container"><label>Filter <input id="filter"/><em></em></label></div>',
+    renderFilter = function(length) {
+      return '<div class="filter-container"><label>Filter <input id="filter"/> <em>' + length + '</em></label> ' +
+      '<a href="/portal/view" title="use filter" class="filter-item">view</a>, ' +
+      '<a href="/portal/manage" title="use filter" class="filter-item">manage</a>, ' +
+      '<a href="admin/" title="use filter" class="filter-item">admin</a>,  ' +
+      '<a href="#compact" class="action-smallimg pure-button pure-button-primary" title="smaller img">resize</a></div>';
+    },
     folders = [
       '<div class="filter-container">',
       '<strong>ENVIRONMENTS:</strong></div>'
@@ -132,29 +148,10 @@ var uri = url.parse(request.url).pathname,
       uri = '';
     }
 
-    if (uri.match('INT5')) {
-      domain = 'http://synergy5-int.roche.com';
-    }
-    else if (uri.match('INT')) {
-      domain = 'http://synergy-int.roche.com';
-    }
-    else if (uri.match('UAT5')) {
-      domain = 'http://synergy5-uat.roche.com';
-    }
-    else if (uri.match('UAT')) {
-      domain = 'http://synergy-uat.roche.com';
-    }
-    else if (uri.match('UAT5-EMAP')) {
-      domain = 'http://synergy5-emap.roche.com';
-    }
-    else if (uri.match('DEMO5')) {
-      domain = 'http://synergy5-demo.roche.com';
-    }
-    else if (uri.match('PROD5')) {
-      domain = 'http://synergy.intranet.roche.com';
-    }
-    else if (uri.match('PROD')) {
-      domain = 'http://synergy.roche.com';
+    for(var item in domains) {
+      if (uri.match(item)) {
+        domain = domains[item];
+      }
     }
 
     try {
@@ -172,7 +169,7 @@ var uri = url.parse(request.url).pathname,
 
     // render images
     if (domain !== '') {
-      output.push(filter);
+      output.push(renderFilter(files.length));
 
       errorFiles = files.filter(function(element) {
         return element.indexOf('error.png') !== -1;
