@@ -22,13 +22,10 @@ var resources = [
 
 var domains = {
 'INT5': 'http://synergy5-int.roche.com',
-'INT': 'http://synergy-int.roche.com',
 'UAT5': 'http://synergy5-uat.roche.com',
-'UAT': 'http://synergy-uat.roche.com',
 'UAT5-EMAP': 'http://synergy5-emap.roche.com',
 'DEMO5': 'http://synergy5-demo.roche.com',
-'PROD5': 'http://synergy.intranet.roche.com',
-'PROD': 'http://synergy.roche.com'
+'PROD5': 'http://synergy.intranet.roche.com'
 };
 
 // confirm remove folder
