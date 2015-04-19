@@ -16,6 +16,7 @@ var resources = [
   '<meta http-equiv="content-type" content="text/html; charset=utf-8"/>',
   '<script src="http://minifiedjs.com/download/minified-web.js"></script>',
   '<script src="/public/script.js"></script>',
+  '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">',
   '<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">',
   '<link rel="stylesheet" href="/public/site.css">'
 ];
@@ -83,7 +84,7 @@ app.use('/remove', function(request, response) {
 
 app.use(function(request, response) {
 var uri = url.parse(request.url).pathname,
-  output = ['<html>'], name,
+  output = ['<html>'], name, parseName,
   files, errorFiles,
   href, linkId,
   domain = '',
@@ -91,10 +92,10 @@ var uri = url.parse(request.url).pathname,
   render = function(name, domain, uri) {
     var output = [],
       prefix = '',
-      errors = 0,
+      data = 0,
       href,
       linkId,
-      errorFile = 'images/' + name + '/errors.txt';
+      errorFile = 'images/' + name + '/errors.json';
 
     // image
     if (name.match(/(.png|.jpg)/)) {
@@ -102,37 +103,56 @@ var uri = url.parse(request.url).pathname,
       prefix = name.match(/_\d{1,5}(\w*?)\.png/)[1];
       href = name.replace(/_\d{1,5}\w*?\.png/g, '').replace(/_/g, '/')
         .replace(/\$1/g, '?').replace(/\$2/g, '&').replace(/\$3/g, '#');
+
       output = [
         '<li><h3 id="image-' + linkId + '">',
-        '<strong title="index in *urls.txt">' + linkId + '</strong> : ',
-        ' <a href="' + domain + href + '" class="title pure-button pure-button-primary" target="blank">',
+        ' <a href="#image-' + linkId + '">',
+        '<em class="pure-button button-small"><i class="fa fa-link"></i></em>',
+        '</a>',
+        ' <a href="' + domain + href + '" title="index :' + linkId + '" class="title pure-button button-small pure-button-primary" target="blank">',
         domain + href + (prefix ? '#' + prefix : '') + '</a>',
-        ' <a href="#image-' + linkId + '"><em class="pure-button button-small">&para;</em></a></h3>',
+        '</h3>',
         '<img src="/images' + uri + "/" + name + '" class="pure-img" /></li>'
       ];
     }
     // folder
     else if (fs.statSync('images' + uri + '/' + name).isDirectory()) {
       href = uri + '/' + name;
+      parseName = name.match(/(\w+)-(\d+-\d+-\d+)_(.+)/);
+
       if (fs.existsSync(errorFile)) {
-        errors = fs.readFileSync(errorFile);
+        data = JSON.parse(fs.readFileSync(errorFile));
       }
+
       output.push([
-        '<div class="pure-g ' + (errors ? 'warning' : 'success')+'">',
-          '<h3 class="pure-u-4-5"><a href="' + href + '">' + name + '</a></h3>',
-          '<div class="pure-u-1-5"><strong class="badge">' + errors + ' warnings, errors</strong> ',
-          '<a href="/remove/ask' + href + '" class="remove pure-button button-small pure-button-primary">remove folder</a>',
-          '</div></div><hr/>'
+        '<div class="pure-g">',
+          '<h3 class="pure-u-5-6">',
+          '<a href="' + href + '">',
+          ' <strong class="pure-u-1-8">' + parseName[1] + '</strong>',
+          ' <small class="time pure-u-5-8">' + parseName[2] + ' ' + parseName[3] + '</small>',
+          '</a>',
+          ' <small>' + data.images + ' images loaded in ' + parseInt(data.loaded, 10) + 's</small>',
+          '</h3>',
+          '<div class="pure-u-1-6">',
+            '<strong class="badge warning">' + data.warnings + ' warnings</strong>',
+            '<strong class="badge error">' + data.errors + ' errors</strong> ',
+            '<a href="/remove/ask' + href + '" class="remove pure-button button-small pure-button-primary" title="remove folder">',
+            '<i class="fa fa-trash-o"></i></a>',
+          '</div>',
+        '</div><hr/>'
         ].join(''));
       }
       return output.join('');
     },
     renderFilter = function(length) {
-      return '<div class="filter-container"><label>Filter <input id="filter"/> <em>' + length + '</em></label> ' +
-      '<a href="/portal/view" title="use filter" class="filter-item">view</a>, ' +
-      '<a href="/portal/manage" title="use filter" class="filter-item">manage</a>, ' +
-      '<a href="admin/" title="use filter" class="filter-item">admin</a>,  ' +
-      '<a href="#compact" class="action-smallimg pure-button pure-button-primary" title="smaller img">resize</a></div>';
+      return '<div class="filter-container"><label>Filter <input id="filter"/> <em>' + length + ' images </em></label> ' +
+      '<a href="/portal/view" title="use filter" class="pure-button button-small filter-item">view</a> ' +
+      '<a href="/portal/manage" title="use filter" class="pure-button button-small filter-item">manage</a> ' +
+      '<a href="admin/" title="use filter" class="pure-button button-small filter-item">admin</a>  ' +
+      '<a href="#compact" class="action-resize pure-button button-small pure-button-primary" title="smaller img"><i class="fa fa-arrows-alt"></i></a> ' +
+      '<a href="#grid-2-columns" class="action-grid pure-button button-small pure-button-primary" title="grid img"><i class="fa fa-th-large"></i></a> ' +
+      '<a href="#grid-3-columns" class="action-grid3 pure-button button-small pure-button-primary" title="grid img"><i class="fa fa-th"></i></a>' +
+      '</div>';
     },
     folders = [
       '<div class="filter-container">',
@@ -171,6 +191,7 @@ var uri = url.parse(request.url).pathname,
       errorFiles = files.filter(function(element) {
         return element.indexOf('error.png') !== -1;
       });
+
       files = files.filter(function(element) {
         return element.indexOf('error.png') === -1;
       });
@@ -185,7 +206,7 @@ var uri = url.parse(request.url).pathname,
       }
 
       // without errors
-      output.push('<ul>');
+      output.push('<ul class="list">');
       for (var i in files) {
         output.push(render(files[i], domain, uri));
       }
@@ -201,7 +222,6 @@ var uri = url.parse(request.url).pathname,
       output.push('</body></html>');
     }
     response.end(output.join(''));
-
     return;
   }
 });

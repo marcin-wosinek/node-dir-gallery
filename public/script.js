@@ -29,8 +29,20 @@ function ready() {
   });
 
   // switch small img
-  _.$(".action-smallimg").on("click", function() {
+  _.$(".action-resize").on("click", function() {
     var value = _.$(document.body).is('.smaller') ? '-smaller' : '+smaller';
+    _.$(document.body).set('$', value);
+    return false;
+  });
+  // switch small img
+  _.$(".action-grid").on("click", function() {
+    var value = _.$(document.body).is('.grid') ? '-grid' : '+grid';
+    _.$(document.body).set('$', value);
+    return false;
+  });
+  // switch small img
+  _.$(".action-grid3").on("click", function() {
+    var value = _.$(document.body).is('.grid3') ? '-grid3' : '+grid3';
     _.$(document.body).set('$', value);
     return false;
   });
